@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'case_list' %}">Cases</a></li>
+            <li class="breadcrumb-item active">{{ child.first_name }} {{ child.last_name }}</li>
+        </ol>
+    </nav>
+
+    <!-- Case Status Badge -->
+    {% if child.status == 'missing' %}
+    <div class="alert alert-danger d-flex align-items-center mb-4">
+        <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 1.5rem;"></i>
+        <div>
+            <h4 class="mb-0">MISSING - NEEDS YOUR HELP</h4>
+            {% if child.is_abducted %}
+            <p class="mb-0"><strong>ABDUCTION SUSPECTED</strong> - Considered extremely dangerous</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <!-- Child Information -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <img src="{{ child.photo.url }}" class="img-fluid rounded-start" alt="{{ child.first_name }}" style="height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ child.first_name }} {{ child.last_name }}</h2>
+                            <p class="card-text">
+                                <strong>Case Number:</strong> {{ child.case_number }}<br>
+                                <strong>Age:</strong> {{ child.age }} years old<br>
+                                <strong>Gender:</strong> {{ child.get_gender_display }}<br>
+                                <strong>Height:</strong> {{ child.height|default:"Unknown" }}<br>
+                                <strong>Weight:</strong> {{ child.weight|default:"Unknown" }}<br>
+                                <strong>Eye Color:</strong> {{ child.eye_color|default:"Unknown" }}<br>
+                                <strong>Hair Color:</strong> {{ child.hair_color|default:"Unknown" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last Seen Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Last Seen Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Date & Time:</strong> {{ child.last_seen_date }}</p>
+                    <p><strong>Location:</strong> {{ child.last_seen_location }}</p>
+                    <p><strong>Last Seen Wearing:</strong></p>
+                    <div>{{ child.last_seen_wearing|safe }}</div>
+                </div>
+            </div>
+
+            <!-- Distinctive Features -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person-bounding-box"></i> Distinctive Features</h5>
+                </div>
+                <div class="card-body">
+                    {{ child.distinctive_features|safe }}
+                </div>
+            </div>
+
+            {% if child.abductor %}
+            <!-- Abductor Information -->
+            <div class="card mb-4 border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-octagon-fill"></i> Abductor Information</h5>
+                </div>
+                <div class="card-body">
+                    {{ child.abductor.description|safe }}
+                    {% if child.abductor.vehicle_description %}
+                    <p><strong>Vehicle:</strong> {{ child.abductor.vehicle_description }}</p>
+                    {% endif %}
+                    {% if child.abductor.vehicle_plate %}
+                    <p><strong>License Plate:</strong> {{ child.abductor.vehicle_plate }}</p>
+                    {% endif %}
+                    {% if child.abductor.last_seen_direction %}
+                    <p><strong>Last Seen Heading:</strong> {{ child.abductor.last_seen_direction }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar Actions -->
+        <div class="col-md-4">
+            <div class="sticky-top" style="top: 20px;">
+                <!-- Action Buttons -->
+                <div class="card mb-3">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Take Action</h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'submit_lead' child.pk %}" class="btn btn-danger w-100 mb-2">
+                            <i class="bi bi-info-circle"></i> Submit a Lead
+                        </a>
+                        <a href="{% url 'submit_location_update' child.pk %}" class="btn btn-warning w-100 mb-2">
+                            <i class="bi bi-geo-alt"></i> Report Sighting
+                        </a>
+                        <a href="{% url 'subscribe_alerts' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-bell"></i> Get Updates
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Location Updates -->
+                {% if location_updates %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-map"></i> Recent Sightings</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for update in location_updates|slice:":3" %}
+                        <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                            <small class="text-muted">{{ update.sighting_time|date:"M d, Y H:i" }}</small>
+                            <p class="mb-1">{{ update.location }}</p>
+                            <small class="text-muted">Reported by: {{ update.reported_by }}</small>
+                        </div>
+                        {% endfor %}
+                        {% if location_updates.count > 3 %}
+                        <a href="#all-updates" class="btn btn-sm btn-outline-secondary w-100">View All</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Important Notice -->
+                <div class="alert alert-warning mt-3">
+                    <h6><i class="bi bi-exclamation-triangle"></i> Important</h6>
+                    <small class="d-block mb-1">• Do not approach if you suspect danger</small>
+                    <small class="d-block mb-1">• Call 911 immediately</small>
+                    <small class="d-block">• Note details: time, location, direction</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Location Updates -->
+    {% if location_updates %}
+    <div class="card mt-4" id="all-updates">
+        <div class="card-header">
+            <h5 class="mb-0">All Verified Location Updates</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Location</th>
+                            <th>Reported By</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for update in location_updates %}
+                        <tr>
+                            <td>{{ update.sighting_time }}</td>
+                            <td>{{ update.location }}</td>
+                            <td>{{ update.reported_by }}</td>
+                            <td>{{ update.description|safe|truncatechars:100 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

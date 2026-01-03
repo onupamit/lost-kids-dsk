@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="bg-danger text-white p-5 rounded mb-4">
+        <h1 class="display-4">Missing Child Alert System</h1>
+        <p class="lead">Help bring missing children home. Report sightings, share information, and subscribe to alerts.</p>
+        <div class="mt-4">
+            <a href="{% url 'report_missing_child' %}" class="btn btn-light btn-lg me-2">
+                <i class="bi bi-exclamation-circle"></i> Report Missing Child
+            </a>
+            <a href="{% url 'subscribe_alerts' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-bell"></i> Subscribe to Alerts
+            </a>
+        </div>
+    </div>
+
+    <!-- Urgent Cases -->
+    {% if urgent_cases %}
+    <div class="mb-5">
+        <h2 class="mb-4 text-danger">
+            <i class="bi bi-exclamation-triangle-fill"></i> Urgent Cases - Abduction Suspected
+        </h2>
+        <div class="row">
+            {% for child in urgent_cases %}
+            <div class="col-md-4 mb-3">
+                <div class="card urgent-alert h-100">
+                    <img src="{{ child.photo.url }}" class="card-img-top" alt="{{ child.first_name }}" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ child.first_name }} {{ child.last_name }}</h5>
+                        <p class="card-text">
+                            <strong>Age:</strong> {{ child.age }}<br>
+                            <strong>Missing Since:</strong> {{ child.last_seen_date|date:"M d, Y" }}<br>
+                            <strong>Last Seen:</strong> {{ child.last_seen_location }}
+                        </p>
+                        <a href="{% url 'case_detail' child.pk %}" class="btn btn-danger">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Cases -->
+    <div class="mb-5">
+        <h2 class="mb-4">Recent Missing Children</h2>
+        <div class="row">
+            {% for child in recent_cases %}
+            <div class="col-md-3 mb-3">
+                <div class="card case-card h-100">
+                    <img src="{{ child.photo.url }}" class="card-img-top" alt="{{ child.first_name }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ child.first_name }} {{ child.last_name }}</h6>
+                        <p class="card-text small">
+                            Age: {{ child.age }}<br>
+                            Missing: {{ child.last_seen_date|date:"M d" }}<br>
+                            {{ child.last_seen_location|truncatechars:30 }}
+                        </p>
+                        <a href="{% url 'case_detail' child.pk %}" class="btn btn-outline-primary btn-sm">View Case</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No active missing child cases at this time.</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-3">
+            <a href="{% url 'case_list' %}" class="btn btn-primary">View All Cases</a>
+        </div>
+    </div>
+
+    <!-- How to Help -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-eye-fill text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="card-title mt-3">Report a Sighting</h4>
+                    <p class="card-text">If you see a missing child, report it immediately with as much detail as possible.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-share-fill text-success" style="font-size: 3rem;"></i>
+                    <h4 class="card-title mt-3">Share Information</h4>
+                    <p class="card-text">Share missing child alerts on social media to increase visibility.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-telephone-fill text-danger" style="font-size: 3rem;"></i>
+                    <h4 class="card-title mt-3">Contact Authorities</h4>
+                    <p class="card-text">Always contact law enforcement immediately with any information.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="bg-light p-4 rounded">
+        <h3 class="text-center mb-4">Together We Can Make a Difference</h3>
+        <div class="row text-center">
+            <div class="col-md-3">
+                <h2 class="text-danger">{{ recent_cases.count }}</h2>
+                <p>Active Cases</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="text-success">98%</h2>
+                <p>Recovery Rate</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="text-primary">24/7</h2>
+                <p>Hotline Available</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="text-warning">1000+</h2>
+                <p>Volunteers</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
