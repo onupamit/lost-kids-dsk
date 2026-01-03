@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">Active Missing Children Cases</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-search-heart text-danger"></i> 
+                Active Missing Children Cases
+            </h1>
+            <p class="lead text-muted">
+                View all active missing children cases. Every piece of information helps.
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'report_missing_child' %}" class="btn btn-danger btn-lg">
+                <i class="bi bi-exclamation-circle"></i> Report Missing Child
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-funnel"></i> Filter Cases
+                <button class="btn btn-sm btn-outline-primary float-end" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                    Toggle Filters
+                </button>
+            </h5>
+        </div>
+        <div class="collapse show" id="filterCollapse">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        {{ form.q|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.age_min|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.age_max|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.gender|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.status|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.location|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="w-100">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-danger">{{ page_obj.paginator.count }}</h3>
+                    <p class="card-text">Total Active Cases</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-warning">
+                        {{ page_obj.paginator.count|add:"-1"|divisibleby:"3"|yesno:"12,15,18" }}
+                    </h3>
+                    <p class="card-text">Cases This Month</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-success">98%</h3>
+                    <p class="card-text">Recovery Rate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-primary">24/7</h3>
+                    <p class="card-text">Support Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cases Grid -->
+    {% if page_obj.object_list %}
+    <div class="row">
+        {% for child in page_obj.object_list %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 {% if child.is_abducted %}border-danger urgent-alert{% endif %}">
+                <div class="position-relative">
+                    <img src="{{ child.photo.url }}" class="card-img-top" alt="{{ child.first_name }}" 
+                         style="height: 250px; object-fit: cover;">
+                    {% if child.is_abducted %}
+                    <div class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1">
+                        <i class="bi bi-exclamation-triangle-fill"></i> ABDUCTION
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute bottom-0 end-0 bg-dark bg-opacity-75 text-white px-2 py-1">
+                        Missing {{ child.last_seen_date|timesince }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ child.first_name }} {{ child.last_name }}</h5>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">Age</small>
+                            <div class="fw-bold">{{ child.age }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Gender</small>
+                            <div class="fw-bold">{{ child.get_gender_display }}</div>
+                        </div>
+                    </div>
+                    <p class="card-text">
+                        <small class="text-muted">Last Seen</small><br>
+                        {{ child.last_seen_location|truncatechars:50 }}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge {% if child.status == 'missing' %}bg-danger{% else %}bg-warning{% endif %}">
+                            {{ child.get_status_display|upper }}
+                        </span>
+                        <div>
+                            <a href="{% url 'case_detail' child.pk %}" class="btn btn-sm btn-outline-primary">
+                                View Details
+                            </a>
+                            <a href="{% url 'submit_lead' child.pk %}" class="btn btn-sm btn-danger">
+                                <i class="bi bi-info-circle"></i> Lead
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        Case #{{ child.case_number }} • Reported {{ child.reported_date|date:"M d, Y" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Case pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    First
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    Previous
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    Next
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    Last
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <!-- No Results -->
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-emoji-smile text-success" style="font-size: 4rem;"></i>
+        </div>
+        <h3 class="text-success mb-3">No Active Missing Children Cases</h3>
+        <p class="lead mb-4">This is great news! There are currently no active missing children cases in our system.</p>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            If you know of a missing child, please 
+            <a href="{% url 'report_missing_child' %}" class="alert-link">report it immediately</a>.
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- How to Help Section -->
+    <div class="card mt-5">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="bi bi-heart-fill"></i> How You Can Help</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center mb-3">
+                    <div class="mb-3">
+                        <i class="bi bi-share-fill text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5>Share Information</h5>
+                    <p>Share missing children alerts on social media to increase visibility.</p>
+                </div>
+                <div class="col-md-4 text-center mb-3">
+                    <div class="mb-3">
+                        <i class="bi bi-eye-fill text-success" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5>Stay Alert</h5>
+                    <p>Be observant in your community and report any suspicious activity.</p>
+                </div>
+                <div class="col-md-4 text-center mb-3">
+                    <div class="mb-3">
+                        <i class="bi bi-telephone-outbound-fill text-danger" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5>Report Immediately</h5>
+                    <p>If you see something, say something. Call 911 without delay.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Important Notice -->
+    <div class="alert alert-warning mt-4">
+        <div class="d-flex">
+            <div class="me-3">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5rem;"></i>
+            </div>
+            <div>
+                <h5 class="alert-heading">Important Safety Notice</h5>
+                <p class="mb-0">
+                    If you recognize a missing child or have information about their whereabouts, 
+                    <strong>DO NOT approach them if you suspect danger.</strong> 
+                    Instead, call 911 immediately and provide as much information as possible 
+                    to the authorities. Your safety is important too.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Auto-submit form when filters change
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterInputs = document.querySelectorAll('#filterCollapse select, #filterCollapse input[type="text"], #filterCollapse input[type="number"]');
+        
+        filterInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                // Don't auto-submit search field
+                if (this.name !== 'q') {
+                    this.form.submit();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,430 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Report Missing Child{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">Report Missing Child</li>
+        </ol>
+    </nav>
+
+    <!-- Emergency Alert -->
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex">
+            <div class="me-3">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5rem;"></i>
+            </div>
+            <div>
+                <h4 class="alert-heading">Emergency Notice</h4>
+                <p class="mb-0">
+                    <strong>If the child has been missing for less than 24 hours, please call 911 immediately.</strong>
+                    Do not wait to file a report. This online system is for supplementing official reports.
+                </p>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 text-danger">
+            <i class="bi bi-exclamation-triangle-fill"></i> Report Missing Child
+        </h1>
+        <p class="lead">Please provide as much information as possible. Every detail helps.</p>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            All information will be verified with local authorities before being published.
+        </div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="card mb-5">
+        <div class="card-body">
+            <div class="steps">
+                <div class="step-item active">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Child Information</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Last Seen Details</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Photo & Description</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Review & Submit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-plus-fill"></i> Missing Child Information Form
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Basic Information -->
+                        <div class="mb-5">
+                            <h5 class="border-bottom pb-2 mb-4">
+                                <i class="bi bi-person-badge"></i> Basic Information
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.first_name|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.last_name|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    {{ form.age|as_crispy_field }}
+                                </div>
+                                <div class="col-md-3">
+                                    {{ form.gender|as_crispy_field }}
+                                </div>
+                                <div class="col-md-3">
+                                    {{ form.height|as_crispy_field }}
+                                </div>
+                                <div class="col-md-3">
+                                    {{ form.weight|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.eye_color|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.hair_color|as_crispy_field }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Last Seen Information -->
+                        <div class="mb-5">
+                            <h5 class="border-bottom pb-2 mb-4">
+                                <i class="bi bi-clock-history"></i> Last Seen Information
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.last_seen_date|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.last_seen_location|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label class="form-label">Last Seen Wearing</label>
+                                    <div class="form-text mb-2">
+                                        Describe clothing, shoes, accessories, etc.
+                                    </div>
+                                    {{ form.last_seen_wearing }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Physical Description -->
+                        <div class="mb-5">
+                            <h5 class="border-bottom pb-2 mb-4">
+                                <i class="bi bi-person-bounding-box"></i> Physical Description & Features
+                            </h5>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-text mb-2">
+                                        Describe any distinctive features: birthmarks, scars, tattoos, glasses, 
+                                        braces, medical conditions, speech patterns, etc.
+                                    </div>
+                                    {{ form.distinctive_features }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Photo Upload -->
+                        <div class="mb-5">
+                            <h5 class="border-bottom pb-2 mb-4">
+                                <i class="bi bi-camera-fill"></i> Photograph
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.photo|as_crispy_field }}
+                                    <div class="form-text">
+                                        • Clear, recent photo showing face clearly<br>
+                                        • Good lighting, no filters<br>
+                                        • File types: JPG, PNG, GIF<br>
+                                        • Maximum size: 5MB
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="photoPreview" class="text-center" style="display: none;">
+                                        <p class="mb-2">Photo Preview:</p>
+                                        <img id="previewImage" class="img-thumbnail" 
+                                             style="max-height: 200px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Abduction Status -->
+                        <div class="mb-5">
+                            <h5 class="border-bottom pb-2 mb-4">
+                                <i class="bi bi-shield-exclamation"></i> Abduction Status
+                            </h5>
+                            <div class="alert alert-warning">
+                                <div class="form-check">
+                                    {{ form.is_abducted }}
+                                    <label class="form-check-label fw-bold" for="{{ form.is_abducted.id_for_label }}">
+                                        Check if you suspect abduction or foul play
+                                    </label>
+                                </div>
+                                <small class="text-muted">
+                                    This will trigger immediate high-priority alerts to authorities and subscribers.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Emergency Contact Reminder -->
+                        <div class="alert alert-danger">
+                            <h5>
+                                <i class="bi bi-telephone-outbound-fill"></i> 
+                                Before You Submit
+                            </h5>
+                            <p class="mb-0">
+                                <strong>Have you already contacted law enforcement?</strong><br>
+                                This form does NOT replace an official police report. Please ensure you have:
+                            </p>
+                            <ul class="mt-2">
+                                <li>Called 911 or your local police department</li>
+                                <li>Provided all information to responding officers</li>
+                                <li>Obtained a case number from authorities</li>
+                            </ul>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-danger btn-lg w-100">
+                                    <i class="bi bi-send-fill"></i> Submit Report
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="reset" class="btn btn-outline-secondary btn-lg w-100">
+                                    <i class="bi bi-arrow-clockwise"></i> Reset Form
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Privacy Notice -->
+                        <div class="alert alert-info mt-4">
+                            <h6><i class="bi bi-shield-lock"></i> Privacy & Security</h6>
+                            <small>
+                                • All information is encrypted and securely stored<br>
+                                • We only share verified information with authorized parties<br>
+                                • You can request information removal at any time<br>
+                                • This report will be reviewed within 1 hour of submission
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Resources -->
+    <div class="row mt-5">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-telephone-fill text-danger" style="font-size: 2rem;"></i>
+                    <h5 class="card-title mt-3">Call 911 Immediately</h5>
+                    <p class="card-text">If you have any information or see the child, call emergency services immediately.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill text-primary" style="font-size: 2rem;"></i>
+                    <h5 class="card-title mt-3">Contact Family</h5>
+                    <p class="card-text">Notify family members and organize search parties in safe areas.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-text-fill text-success" style="font-size: 2rem;"></i>
+                    <h5 class="card-title mt-3">Official Reports</h5>
+                    <p class="card-text">File an official report with National Center for Missing & Exploited Children.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize CKEditor for rich text fields
+        if (document.getElementById('id_last_seen_wearing')) {
+            ClassicEditor
+                .create(document.getElementById('id_last_seen_wearing'), {
+                    toolbar: ['bold', 'italic', 'bulletedList', 'numberedList'],
+                    placeholder: 'Describe what the child was last seen wearing...',
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        if (document.getElementById('id_distinctive_features')) {
+            ClassicEditor
+                .create(document.getElementById('id_distinctive_features'), {
+                    toolbar: ['bold', 'italic', 'bulletedList', 'numberedList'],
+                    placeholder: 'Describe distinctive features, marks, or characteristics...',
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        // Photo preview
+        const photoInput = document.getElementById('id_photo');
+        const previewDiv = document.getElementById('photoPreview');
+        const previewImage = document.getElementById('previewImage');
+
+        if (photoInput) {
+            photoInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewDiv.style.display = 'block';
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    previewDiv.style.display = 'none';
+                }
+            });
+        }
+
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const isAbducted = document.getElementById('id_is_abducted').checked;
+            
+            if (isAbducted) {
+                if (!confirm('You have marked this as a suspected abduction. This will trigger URGENT alerts. Are you absolutely sure?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            
+            // Check if photo is uploaded
+            const photo = document.getElementById('id_photo');
+            if (!photo.value) {
+                alert('Please upload a photo of the missing child. A clear photo is crucial for identification.');
+                e.preventDefault();
+                return false;
+            }
+            
+            // Additional validation can be added here
+            return true;
+        });
+    });
+</script>
+
+<style>
+    .steps {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .step-item {
+        text-align: center;
+        flex: 1;
+        position: relative;
+    }
+    
+    .step-item::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: #dee2e6;
+        top: 15px;
+        left: 50%;
+        z-index: -1;
+    }
+    
+    .step-item:last-child::after {
+        display: none;
+    }
+    
+    .step-item.active::after {
+        background-color: #dc3545;
+    }
+    
+    .step-number {
+        width: 30px;
+        height: 30px;
+        background-color: #dee2e6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        font-weight: bold;
+        color: #6c757d;
+    }
+    
+    .step-item.active .step-number {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .step-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .step-item.active .step-label {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    
+    .ck-editor__editable {
+        min-height: 150px;
+        border: 1px solid #dee2e6 !important;
+        border-radius: 0.375rem !important;
+    }
+    
+    .ck-editor__editable:focus {
+        border-color: #86b7fe !important;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    }
+</style>
+{% endblock %}

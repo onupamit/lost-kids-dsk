@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Search Missing Children{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">Advanced Search</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-5">
+            <i class="bi bi-search-heart text-primary"></i> 
+            Advanced Search
+        </h1>
+        <p class="lead text-muted">
+            Search our database of missing children cases using multiple criteria.
+        </p>
+    </div>
+
+    <div class="row">
+        <!-- Search Form Column -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-funnel-fill"></i> Search Filters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" id="searchForm">
+                        <div class="mb-3">
+                            {{ form.q|as_crispy_field }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Age Range</label>
+                            <div class="row">
+                                <div class="col">
+                                    {{ form.age_min|as_crispy_field }}
+                                </div>
+                                <div class="col">
+                                    {{ form.age_max|as_crispy_field }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.gender|as_crispy_field }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.status|as_crispy_field }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.location|as_crispy_field }}
+                        </div>
+                        
+                        <!-- Additional Filters (Optional) -->
+                        <div class="accordion mb-4" id="moreFilters">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" 
+                                            data-bs-toggle="collapse" data-bs-target="#collapseFilters">
+                                        <i class="bi bi-filter-circle"></i> More Filters
+                                    </button>
+                                </h2>
+                                <div id="collapseFilters" class="accordion-collapse collapse" 
+                                     data-bs-parent="#moreFilters">
+                                    <div class="accordion-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Eye Color</label>
+                                            <select class="form-select" name="eye_color">
+                                                <option value="">Any</option>
+                                                <option value="blue">Blue</option>
+                                                <option value="brown">Brown</option>
+                                                <option value="green">Green</option>
+                                                <option value="hazel">Hazel</option>
+                                                <option value="gray">Gray</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Hair Color</label>
+                                            <select class="form-select" name="hair_color">
+                                                <option value="">Any</option>
+                                                <option value="blonde">Blonde</option>
+                                                <option value="brown">Brown</option>
+                                                <option value="black">Black</option>
+                                                <option value="red">Red</option>
+                                                <option value="auburn">Auburn</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   id="abductionOnly" name="abduction_only">
+                                            <label class="form-check-label" for="abductionOnly">
+                                                Suspected Abduction Only
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   id="recentOnly" name="recent_only">
+                                            <label class="form-check-label" for="recentOnly">
+                                                Last 7 Days Only
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i> Search Cases
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary" 
+                                    onclick="window.location.href='{% url 'search_cases' %}'">
+                                <i class="bi bi-arrow-clockwise"></i> Reset Filters
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Search Tips -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Search Tips</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Use partial names for better results</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Search by city, state, or landmark</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Leave fields blank to see all cases</small>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Check "More Filters" for specific criteria</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Column -->
+        <div class="col-lg-8">
+            <!-- Results Header -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="card-title mb-0">
+                                Search Results 
+                                {% if request.GET.q or request.GET.age_min or request.GET.age_max or request.GET.gender or request.GET.location %}
+                                <span class="text-muted">(Filtered)</span>
+                                {% endif %}
+                            </h5>
+                        </div>
+                        <div class="col-auto">
+                            <span class="badge bg-primary">
+                                {{ cases.count }} case{{ cases.count|pluralize:"s" }} found
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if cases %}
+            <!-- Results Grid -->
+            <div class="row">
+                {% for child in cases %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 {% if child.is_abducted %}border-danger{% endif %}">
+                        <div class="row g-0 h-100">
+                            <div class="col-md-5">
+                                <img src="{{ child.photo.url }}" 
+                                     class="img-fluid rounded-start h-100" 
+                                     alt="{{ child.first_name }}"
+                                     style="object-fit: cover; min-height: 180px;">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body h-100 d-flex flex-column">
+                                    <h6 class="card-title mb-1">
+                                        {{ child.first_name }} {{ child.last_name }}
+                                    </h6>
+                                    <p class="card-text small mb-2">
+                                        <span class="badge bg-info">{{ child.age }} years</span>
+                                        <span class="badge bg-secondary">{{ child.get_gender_display }}</span>
+                                        {% if child.is_abducted %}
+                                        <span class="badge bg-danger">Abduction</span>
+                                        {% endif %}
+                                    </p>
+                                    <p class="card-text small text-muted mb-2">
+                                        <i class="bi bi-geo-alt"></i> 
+                                        {{ child.last_seen_location|truncatechars:30 }}
+                                    </p>
+                                    <p class="card-text small mb-3">
+                                        <i class="bi bi-calendar"></i> 
+                                        Missing since {{ child.last_seen_date|date:"M d, Y" }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <a href="{% url 'case_detail' child.pk %}" 
+                                           class="btn btn-sm btn-outline-primary w-100">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- No Results Message -->
+            {% else %}
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-search text-muted" style="font-size: 4rem;"></i>
+                </div>
+                <h4 class="text-muted mb-3">No Cases Found</h4>
+                <p class="text-muted mb-4">
+                    {% if request.GET %}
+                        No matching cases found with your current search criteria.
+                    {% else %}
+                        No cases available in the system at this time.
+                    {% endif %}
+                </p>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Try broadening your search criteria or 
+                    <a href="{% url 'case_list' %}" class="alert-link">view all active cases</a>.
+                </div>
+                <a href="{% url 'case_list' %}" class="btn btn-primary">
+                    <i class="bi bi-list"></i> View All Cases
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Statistics Section -->
+            {% if cases %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-graph-up"></i> Search Statistics</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="display-6 text-primary">{{ cases.count }}</div>
+                            <small class="text-muted">Cases Found</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            {% with avg_age=cases|dictsort:"age"|slice:"0:cases.count"|join:"" %}
+                            <div class="display-6 text-success">
+                                {{ cases|dictsort:"age"|slice:"0:cases.count"|join:""|slice:"0:0"|add:cases|dictsortreversed:"age"|first.age|default:"0" }}
+                            </div>
+                            {% endwith %}
+                            <small class="text-muted">Oldest Child</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="display-6 text-warning">
+                                {{ cases|dictsort:"last_seen_date"|first.last_seen_date|timesince }}
+                            </div>
+                            <small class="text-muted">Longest Missing</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="display-6 text-danger">
+                                {{ cases|dictsort:"is_abducted"|last.is_abducted|yesno:"1,0"|add:cases.count|add:"-1" }}
+                            </div>
+                            <small class="text-muted">Abduction Cases</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export/Share Options -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="mb-0">Share This Search</h6>
+                        </div>
+                        <div class="col-auto">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-printer"></i> Print
+                                </button>
+                                <button type="button" class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-envelope"></i> Email
+                                </button>
+                                <button type="button" class="btn btn-outline-info btn-sm">
+                                    <i class="bi bi-share"></i> Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Information Section -->
+    <div class="row mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-eye-fill text-primary" style="font-size: 2rem;"></i>
+                    </div>
+                    <h5>Be Observant</h5>
+                    <p class="card-text">
+                        Pay attention to children in your community. Note details like clothing, 
+                        appearance, and any accompanying adults.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-phone-fill text-success" style="font-size: 2rem;"></i>
+                    </div>
+                    <h5>Report Immediately</h5>
+                    <p class="card-text">
+                        If you recognize a missing child, call 911 immediately. Do not approach 
+                        if you suspect danger.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-share-fill text-warning" style="font-size: 2rem;"></i>
+                    </div>
+                    <h5>Spread Awareness</h5>
+                    <p class="card-text">
+                        Share missing child alerts on social media. The more people who see 
+                        the information, the better the chances of recovery.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Disclaimer -->
+    <div class="alert alert-warning mt-4">
+        <h6><i class="bi bi-exclamation-triangle"></i> Legal Disclaimer</h6>
+        <small>
+            This search tool is provided for informational purposes only. All information should 
+            be verified with local authorities. If you have information about a missing child, 
+            contact law enforcement immediately. Do not take matters into your own hands.
+        </small>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-submit form when certain filters change
+        const autoSubmitFilters = document.querySelectorAll('select[name="gender"], select[name="status"], input[name="abduction_only"], input[name="recent_only"]');
+        
+        autoSubmitFilters.forEach(filter => {
+            filter.addEventListener('change', function() {
+                document.getElementById('searchForm').submit();
+            });
+        });
+
+        // Initialize date pickers if they exist
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        dateInputs.forEach(input => {
+            if (!input.value) {
+                const today = new Date().toISOString().split('T')[0];
+                input.value = today;
+            }
+        });
+
+        // Save search preferences
+        const saveSearchBtn = document.getElementById('saveSearch');
+        if (saveSearchBtn) {
+            saveSearchBtn.addEventListener('click', function() {
+                const searchParams = new URLSearchParams(window.location.search);
+                localStorage.setItem('lastSearch', searchParams.toString());
+                alert('Search preferences saved!');
+            });
+        }
+
+        // Load saved search
+        const savedSearch = localStorage.getItem('lastSearch');
+        if (savedSearch && !window.location.search) {
+            const loadBtn = document.createElement('button');
+            loadBtn.className = 'btn btn-sm btn-outline-info mt-2';
+            loadBtn.innerHTML = '<i class="bi bi-clock-history"></i> Load Last Search';
+            loadBtn.addEventListener('click', function() {
+                window.location.href = '{% url "search_cases" %}?' + savedSearch;
+            });
+            document.querySelector('.card-header').appendChild(loadBtn);
+        }
+    });
+</script>
+
+<style>
+    .sticky-top {
+        position: -webkit-sticky;
+        position: sticky;
+        z-index: 1000;
+    }
+    
+    .card {
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .badge {
+        font-size: 0.7em;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: #f8f9fa;
+        color: #0d6efd;
+    }
+    
+    .form-select, .form-control {
+        border-radius: 0.375rem;
+    }
+    
+    @media (max-width: 768px) {
+        .sticky-top {
+            position: relative;
+            top: 0;
+        }
+    }
+</style>
+{% endblock %}
