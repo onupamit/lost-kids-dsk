@@ -1,0 +1,473 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Submit Lead - {{ child.first_name }} {{ child.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'case_detail' child.pk %}">{{ child.first_name }} {{ child.last_name }}</a></li>
+            <li class="breadcrumb-item active">Submit Lead</li>
+        </ol>
+    </nav>
+
+    <!-- Emergency Alert -->
+    <div class="alert alert-danger mb-4">
+        <div class="d-flex">
+            <div class="me-3">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5rem;"></i>
+            </div>
+            <div>
+                <h5 class="alert-heading">IF YOU SEE THE CHILD NOW</h5>
+                <p class="mb-0">
+                    <strong>CALL 911 IMMEDIATELY!</strong> Do not use this form for real-time sightings. 
+                    This form is for historical information or tips.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Child Information Sidebar -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge"></i> About This Case
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <img src="{{ child.photo.url }}" alt="{{ child.first_name }}" 
+                             class="img-fluid rounded" style="max-height: 200px;">
+                    </div>
+                    <h5 class="text-center">{{ child.first_name }} {{ child.last_name }}</h5>
+                    
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <small class="text-muted d-block">Age</small>
+                            <strong>{{ child.age }} years</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block">Missing Since</small>
+                            <strong>{{ child.last_seen_date|date:"M d, Y" }}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <small class="text-muted d-block">Last Seen At</small>
+                        <strong>{{ child.last_seen_location }}</strong>
+                    </div>
+                    
+                    {% if child.is_abducted %}
+                    <div class="alert alert-warning mt-3">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <small><strong>ABDUCTION SUSPECTED</strong> - Exercise extreme caution</small>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'case_detail' child.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-eye"></i> View Full Case Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What Constitutes a Lead -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-lightbulb"></i> What to Report</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0 small">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            Possible sightings (past or present)
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            Information about potential abductor
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            Suspicious vehicles or individuals
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            Social media clues or communications
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success"></i>
+                            Any other relevant information
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Privacy Notice -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-shield-lock"></i> Your Privacy</h6>
+                </div>
+                <div class="card-body small">
+                    <p class="mb-0">
+                        • Your information is kept confidential<br>
+                        • Shared only with authorized authorities<br>
+                        • You can remain anonymous if needed<br>
+                        • All tips are treated seriously
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lead Submission Form -->
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-info-square-fill"></i> Submit Lead Information
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Important:</strong> Please provide as much detail as possible. 
+                        Even small pieces of information can be crucial to investigators.
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Your Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-person-lines-fill"></i> Your Information
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.reporter_name|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.reporter_email|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.reporter_phone|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mt-4 pt-2">
+                                        <input class="form-check-input" type="checkbox" id="anonymous" name="anonymous">
+                                        <label class="form-check-label" for="anonymous">
+                                            Submit anonymously
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-text">
+                                Your contact information helps investigators follow up if they need more details. 
+                                All information is kept confidential.
+                            </div>
+                        </div>
+
+                        <!-- Lead Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-chat-square-text-fill"></i> Lead Details
+                            </h5>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">What information do you have?*</label>
+                                    <div class="form-text mb-2">
+                                        Be specific about dates, times, locations, people, vehicles, 
+                                        and any other relevant details.
+                                    </div>
+                                    {{ form.information }}
+                                </div>
+                            </div>
+                            
+                            <!-- Information Type Selection -->
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label class="form-label">Type of Information</label>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="info_type" 
+                                                       id="sighting" value="sighting">
+                                                <label class="form-check-label" for="sighting">
+                                                    <i class="bi bi-eye"></i> Sighting
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="info_type" 
+                                                       id="vehicle" value="vehicle">
+                                                <label class="form-check-label" for="vehicle">
+                                                    <i class="bi bi-truck"></i> Vehicle Info
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="info_type" 
+                                                       id="person" value="person">
+                                                <label class="form-check-label" for="person">
+                                                    <i class="bi bi-person"></i> Person Info
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="info_type" 
+                                                       id="digital" value="digital">
+                                                <label class="form-check-label" for="digital">
+                                                    <i class="bi bi-phone"></i> Digital Clue
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="info_type" 
+                                                       id="other" value="other" checked>
+                                                <label class="form-check-label" for="other">
+                                                    <i class="bi bi-question-circle"></i> Other
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Evidence Upload -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-file-earmark-arrow-up-fill"></i> Evidence (Optional)
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.evidence_file|as_crispy_field }}
+                                    <div class="form-text">
+                                        Upload photos, videos, documents, or screenshots.
+                                        Max size: 10MB
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Acceptable Evidence</h6>
+                                            <ul class="small mb-0">
+                                                <li>Photos of person/vehicle</li>
+                                                <li>Security camera footage</li>
+                                                <li>Screenshots of messages</li>
+                                                <li>Social media posts</li>
+                                                <li>Document scans</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- When Did You See/Know -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-calendar-event"></i> Timeline
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label">When did you see/know this?</label>
+                                    <input type="datetime-local" class="form-control" 
+                                           name="when_occurred" id="when_occurred">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">How sure are you?</label>
+                                    <select class="form-select" name="certainty">
+                                        <option value="very">Very sure</option>
+                                        <option value="somewhat" selected>Somewhat sure</option>
+                                        <option value="unsure">Not very sure</option>
+                                        <option value="guess">Just a guess</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Section -->
+                        <div class="mt-5">
+                            <div class="alert alert-warning">
+                                <h6><i class="bi bi-exclamation-diamond"></i> Before Submitting</h6>
+                                <small>
+                                    By submitting this lead, you confirm that:
+                                </small>
+                                <ul class="small mb-0">
+                                    <li>The information is truthful to the best of your knowledge</li>
+                                    <li>You have not tampered with any evidence</li>
+                                    <li>You understand this may be used in an investigation</li>
+                                </ul>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="reset" class="btn btn-outline-secondary me-md-2">
+                                    <i class="bi bi-arrow-clockwise"></i> Clear Form
+                                </button>
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-send-check"></i> Submit Lead to Authorities
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- What Happens Next -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> What Happens Next?</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="number-circle">1</div>
+                            <h6>Submission Review</h6>
+                            <small>Our team reviews your lead within 1 hour</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="number-circle">2</div>
+                            <h6>Authority Notification</h6>
+                            <small>Shared with relevant law enforcement</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="number-circle">3</div>
+                            <h6>Investigation</h6>
+                            <small>Authorities follow up on credible leads</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="number-circle">4</div>
+                            <h6>You May Be Contacted</h6>
+                            <small>If investigators need more information</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize CKEditor for information field
+        if (document.getElementById('id_information')) {
+            ClassicEditor
+                .create(document.getElementById('id_information'), {
+                    toolbar: ['bold', 'italic', 'bulletedList', 'numberedList'],
+                    placeholder: 'Provide detailed information about your lead...',
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        // Set default datetime to now
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('when_occurred').value = now.toISOString().slice(0, 16);
+
+        // Anonymous checkbox handling
+        const anonymousCheckbox = document.getElementById('anonymous');
+        const nameField = document.getElementById('id_reporter_name');
+        const emailField = document.getElementById('id_reporter_email');
+        const phoneField = document.getElementById('id_reporter_phone');
+
+        anonymousCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                nameField.disabled = true;
+                emailField.disabled = true;
+                phoneField.disabled = true;
+                nameField.value = 'Anonymous';
+                emailField.value = '';
+                phoneField.value = '';
+            } else {
+                nameField.disabled = false;
+                emailField.disabled = false;
+                phoneField.disabled = false;
+                if (nameField.value === 'Anonymous') {
+                    nameField.value = '';
+                }
+            }
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const infoField = document.getElementById('id_information');
+            if (infoField.value.trim().length < 10) {
+                alert('Please provide more detailed information about your lead (at least 10 characters).');
+                e.preventDefault();
+                return false;
+            }
+            
+            if (!anonymousCheckbox.checked) {
+                if (!nameField.value.trim()) {
+                    alert('Please provide your name or check "Submit anonymously".');
+                    e.preventDefault();
+                    return false;
+                }
+                if (!emailField.value.trim()) {
+                    alert('Please provide your email address for follow-up.');
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            
+            return confirm('Are you ready to submit this lead to authorities? This action cannot be undone.');
+        });
+    });
+</script>
+
+<style>
+    .number-circle {
+        width: 40px;
+        height: 40px;
+        background-color: #0d6efd;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 auto 10px;
+    }
+    
+    .sticky-top {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 20px;
+    }
+    
+    .ck-editor__editable {
+        min-height: 200px;
+        border: 1px solid #dee2e6 !important;
+        border-radius: 0.375rem !important;
+    }
+    
+    input:disabled {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+    }
+    
+    @media (max-width: 992px) {
+        .sticky-top {
+            position: relative;
+            top: 0;
+        }
+    }
+</style>
+{% endblock %}

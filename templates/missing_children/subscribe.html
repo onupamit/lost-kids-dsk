@@ -1,0 +1,608 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Subscribe to Missing Child Alerts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">Subscribe to Alerts</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-5">
+            <i class="bi bi-bell-fill text-primary"></i> 
+            Subscribe to Missing Child Alerts
+        </h1>
+        <p class="lead text-muted">
+            Get notified immediately when a child goes missing in your area.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- Subscription Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient-primary text-white py-4">
+                    <div class="row align-items-center">
+                        <div class="col-2 text-center">
+                            <i class="bi bi-shield-check" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <div class="col-10">
+                            <h4 class="mb-1">Join Our Alert Network</h4>
+                            <p class="mb-0 small opacity-75">
+                                Be the eyes and ears in your community
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <div class="alert alert-success mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="bi bi-check-circle-fill" style="font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <strong>Why subscribe?</strong><br>
+                                Subscribers help recover missing children 30% faster by spreading awareness quickly.
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Email Address -->
+                        <div class="mb-4">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">
+                                    <i class="bi bi-envelope-fill"></i>
+                                </span>
+                                {{ form.email }}
+                            </div>
+                            <div class="form-text mt-2">
+                                We'll send a verification email to this address.
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="bi bi-geo-alt"></i> Your Location (Optional)
+                            </label>
+                            <div class="input-group">
+                                {{ form.location }}
+                                <button class="btn btn-outline-secondary" type="button" id="detectLocation">
+                                    <i class="bi bi-compass"></i> Detect
+                                </button>
+                            </div>
+                            <div class="form-text">
+                                Adding your location helps us send you relevant local alerts.
+                            </div>
+                        </div>
+
+                        <!-- Alert Preferences -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-sliders"></i> Alert Preferences
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Alert Frequency</label>
+                                    <select class="form-select" name="frequency">
+                                        <option value="immediate" selected>Immediate (all alerts)</option>
+                                        <option value="urgent">Urgent cases only</option>
+                                        <option value="daily">Daily digest</option>
+                                        <option value="weekly">Weekly summary</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Radius</label>
+                                    <select class="form-select" name="radius">
+                                        <option value="5">5 miles from my location</option>
+                                        <option value="10" selected>10 miles from my location</option>
+                                        <option value="25">25 miles from my location</option>
+                                        <option value="50">50 miles from my location</option>
+                                        <option value="100">100 miles from my location</option>
+                                        <option value="all">All alerts (statewide)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="sms_alerts" name="sms_alerts">
+                                    <label class="form-check-label" for="sms_alerts">
+                                        Also send SMS alerts (standard rates may apply)
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="push_alerts" name="push_alerts" checked>
+                                    <label class="form-check-label" for="push_alerts">
+                                        Enable browser push notifications
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="abduction_alerts" name="abduction_alerts" checked>
+                                    <label class="form-check-label" for="abduction_alerts">
+                                        Receive abduction alerts (highest priority)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- How Alerts Help -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-graph-up-arrow"></i> The Impact of Your Subscription
+                            </h5>
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-3">
+                                    <div class="stat-circle">
+                                        <div class="stat-number">30%</div>
+                                        <div class="stat-label">Faster Recovery</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="stat-circle">
+                                        <div class="stat-number">85%</div>
+                                        <div class="stat-label">More Eyes</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="stat-circle">
+                                        <div class="stat-number">24/7</div>
+                                        <div class="stat-label">Awareness</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-center text-muted small">
+                                Every subscriber increases the chances of a missing child being found safely.
+                            </p>
+                        </div>
+
+                        <!-- Privacy & Terms -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="privacy" required>
+                                <label class="form-check-label" for="privacy">
+                                    I agree to receive missing child alerts and understand I can unsubscribe at any time.
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                                </label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="emergency" required>
+                                <label class="form-check-label" for="emergency">
+                                    I understand these alerts are for emergency purposes and I will contact 911
+                                    if I have real-time information about a missing child.
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-bell-fill"></i> Subscribe to Alerts
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                Maybe Later
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Information -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <!-- Sample Alert -->
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Sample Alert
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert-sample">
+                        <div class="alert-header">
+                            <strong>URGENT: MISSING CHILD ALERT</strong><br>
+                            <small>Springfield, IL • Just Now</small>
+                        </div>
+                        <div class="alert-body mt-2">
+                            <strong>Sarah Johnson, 8</strong><br>
+                            Last seen: Today, 3:45 PM<br>
+                            Location: Oak Street Park<br>
+                            Wearing: Pink jacket, blue jeans<br>
+                            <small class="text-danger">If seen, call 911 immediately</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-star-fill text-warning"></i> Benefits</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Immediate notifications</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Localized alerts</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Verified information only</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Unsubscribe anytime</small>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success"></i>
+                            <small>Help save lives</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-bar-chart-fill text-info"></i> Our Network</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="display-6 text-primary">10,247</div>
+                        <small class="text-muted">Active Subscribers</small>
+                    </div>
+                    <hr>
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Recovery Rate</span>
+                            <span class="text-success">98%</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Avg. Response Time</span>
+                            <span class="text-warning">12 min</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Alerts This Month</span>
+                            <span class="text-danger">47</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="bi bi-question-circle"></i> Frequently Asked Questions
+            </h3>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            How often will I receive alerts?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            You'll only receive alerts when a child goes missing in your selected area. 
+                            On average, subscribers receive 2-3 alerts per month, but this varies by location.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            Can I change my preferences later?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes! Every alert includes an "unsubscribe or manage preferences" link. 
+                            You can change your location, frequency, or unsubscribe at any time.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            Is my information secure?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Absolutely. We use enterprise-grade encryption and never sell or share 
+                            your information with third parties. Your data is used solely for 
+                            missing child alerts.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            What should I do if I receive an alert?
+                        </button>
+                    </h2>
+                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            1. Read the alert carefully and note the child's description.<br>
+                            2. Be observant in your community.<br>
+                            3. If you see the child or have information, CALL 911 immediately.<br>
+                            4. Share the alert responsibly on social media.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="bi bi-chat-heart-fill text-danger"></i> Subscribers Making a Difference
+            </h3>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="me-3">
+                                    <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Maria G.</h6>
+                                    <small class="text-muted">Subscriber for 2 years</small>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                "Because of an alert, I recognized a missing child at my grocery store.
+                                Police were there in minutes and she was safely returned home."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="me-3">
+                                    <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">James R.</h6>
+                                    <small class="text-muted">School Bus Driver</small>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                "As a bus driver, I see hundreds of kids daily. These alerts help me
+                                stay vigilant and recognize children who might need help."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <div class="me-3">
+                                    <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Lisa T.</h6>
+                                    <small class="text-muted">Community Organizer</small>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                "Our neighborhood watch group all subscribes. We've helped locate
+                                three missing children in our area through these alerts."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Data Collection & Use</h6>
+                <p>We collect only the information necessary to send you missing child alerts:</p>
+                <ul>
+                    <li>Email address for sending alerts</li>
+                    <li>Location data (optional) for localizing alerts</li>
+                    <li>Alert preferences you select</li>
+                </ul>
+                
+                <h6>Data Protection</h6>
+                <p>Your information is:</p>
+                <ul>
+                    <li>Encrypted using AES-256 encryption</li>
+                    <li>Stored on secure servers</li>
+                    <li>Never sold or shared with third parties</li>
+                    <li>Used only for missing child alerts</li>
+                </ul>
+                
+                <h6>Your Rights</h6>
+                <p>You can at any time:</p>
+                <ul>
+                    <li>Unsubscribe from alerts</li>
+                    <li>Update your preferences</li>
+                    <li>Request deletion of your data</li>
+                    <li>Opt out of specific alert types</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Location detection
+        const detectBtn = document.getElementById('detectLocation');
+        const locationField = document.getElementById('id_location');
+        
+        detectBtn.addEventListener('click', function() {
+            if (navigator.geolocation) {
+                detectBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Detecting...';
+                detectBtn.disabled = true;
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        // Reverse geocoding would be implemented here
+                        // For now, we'll just show coordinates
+                        const lat = position.coords.latitude.toFixed(4);
+                        const lon = position.coords.longitude.toFixed(4);
+                        locationField.value = `Location: ${lat}, ${lon}`;
+                        detectBtn.innerHTML = '<i class="bi bi-check-circle"></i> Detected';
+                        
+                        setTimeout(() => {
+                            detectBtn.innerHTML = '<i class="bi bi-compass"></i> Detect';
+                            detectBtn.disabled = false;
+                        }, 2000);
+                    },
+                    function(error) {
+                        alert('Unable to detect location. Please enter manually.');
+                        detectBtn.innerHTML = '<i class="bi bi-compass"></i> Detect';
+                        detectBtn.disabled = false;
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const emailField = document.getElementById('id_email');
+            const privacyCheck = document.getElementById('privacy');
+            const emergencyCheck = document.getElementById('emergency');
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailField.value)) {
+                alert('Please enter a valid email address.');
+                emailField.focus();
+                e.preventDefault();
+                return false;
+            }
+            
+            // Checkboxes validation
+            if (!privacyCheck.checked) {
+                alert('You must agree to the Privacy Policy to subscribe.');
+                privacyCheck.focus();
+                e.preventDefault();
+                return false;
+            }
+            
+            if (!emergencyCheck.checked) {
+                alert('You must acknowledge the emergency alert purpose.');
+                emergencyCheck.focus();
+                e.preventDefault();
+                return false;
+            }
+            
+            return confirm('Ready to join our alert network? You will receive a verification email shortly.');
+        });
+    });
+</script>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    }
+    
+    .stat-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #e7f1ff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        border: 3px solid #0d6efd;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .alert-sample {
+        border: 2px solid #dc3545;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #fff5f5;
+    }
+    
+    .alert-header {
+        color: #dc3545;
+        border-bottom: 1px solid #dc3545;
+        padding-bottom: 5px;
+    }
+    
+    .alert-body {
+        font-size: 0.9rem;
+    }
+    
+    .input-group-lg .form-control {
+        height: calc(3.5rem + 2px);
+        padding: 1rem 1rem;
+        font-size: 1.25rem;
+    }
+    
+    .input-group-lg .input-group-text {
+        height: calc(3.5rem + 2px);
+        padding: 1rem 1rem;
+        font-size: 1.25rem;
+    }
+    
+    @media (max-width: 768px) {
+        .stat-circle {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .stat-number {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}

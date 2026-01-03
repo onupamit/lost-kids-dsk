@@ -1,0 +1,622 @@
+{% extends 'base.html' %}
+
+{% block title %}Emergency Contacts & Resources{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">Emergency Contacts</li>
+        </ol>
+    </nav>
+
+    <!-- Emergency Banner -->
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <i class="bi bi-telephone-outbound-fill" style="font-size: 2rem;"></i>
+            </div>
+            <div>
+                <h4 class="alert-heading mb-1">IN AN EMERGENCY, CALL 911 IMMEDIATELY</h4>
+                <p class="mb-0">Do not delay. If a child is in danger, call emergency services first.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-5">
+            <i class="bi bi-telephone-plus-fill text-danger"></i> 
+            Emergency Contacts & Resources
+        </h1>
+        <p class="lead text-muted">
+            Critical contacts and resources for missing and exploited children.
+        </p>
+    </div>
+
+    <!-- Quick Action Cards -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card border-danger h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-telephone-fill text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="card-title">911</h4>
+                    <p class="card-text">
+                        For immediate emergencies, life-threatening situations, 
+                        or if you see a missing child right now.
+                    </p>
+                    <button class="btn btn-danger btn-lg w-100" onclick="call911()">
+                        <i class="bi bi-telephone-outbound"></i> Call 911
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card border-warning h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-phone-fill text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="card-title">National Hotline</h4>
+                    <p class="card-text">
+                        1-800-THE-LOST (1-800-843-5678)<br>
+                        National Center for Missing & Exploited Children
+                    </p>
+                    <button class="btn btn-warning btn-lg w-100" onclick="callHotline()">
+                        <i class="bi bi-telephone"></i> Call Hotline
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card border-primary h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-chat-dots-fill text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="card-title">CyberTipline</h4>
+                    <p class="card-text">
+                        Report online exploitation, child pornography, 
+                        or internet-related child sexual exploitation.
+                    </p>
+                    <a href="https://www.missingkids.org/gethelpnow/cybertipline" 
+                       target="_blank" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-shield-check"></i> Report Online
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- National Contacts -->
+    <div class="card mb-5">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">
+                <i class="bi bi-shield-check"></i> National Emergency Contacts
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Organization</th>
+                            <th>Contact</th>
+                            <th>Description</th>
+                            <th>Available</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>National Center for Missing & Exploited Children</strong>
+                            </td>
+                            <td>1-800-THE-LOST<br>(1-800-843-5678)</td>
+                            <td>Nation's clearinghouse for missing children cases</td>
+                            <td>24/7</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="callHotline()">
+                                    <i class="bi bi-telephone"></i> Call
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>FBI Violent Crimes Against Children</strong>
+                            </td>
+                            <td>Contact local FBI field office</td>
+                            <td>Federal investigations for child abduction cases</td>
+                            <td>Business Hours</td>
+                            <td>
+                                <a href="https://www.fbi.gov/contact-us/field-offices" 
+                                   target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-geo-alt"></i> Find Office
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Amber Alert</strong>
+                            </td>
+                            <td>Managed by law enforcement</td>
+                            <td>Child abduction emergency response system</td>
+                            <td>As activated</td>
+                            <td>
+                                <a href="https://amberalert.ojp.gov" 
+                                   target="_blank" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-bell-fill"></i> Learn More
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Child Find of America</strong>
+                            </td>
+                            <td>1-800-I-AM-LOST<br>(1-800-426-5678)</td>
+                            <td>Missing child prevention and location services</td>
+                            <td>24/7 Hotline</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="callChildFind()">
+                                    <i class="bi bi-telephone"></i> Call
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>National Runaway Safeline</strong>
+                            </td>
+                            <td>1-800-RUNAWAY<br>(1-800-786-2929)</td>
+                            <td>Confidential help for runaway youth and families</td>
+                            <td>24/7</td>
+                            <td>
+                                <a href="https://www.1800runaway.org" 
+                                   target="_blank" class="btn btn-sm btn-success">
+                                    <i class="bi bi-chat"></i> Chat/Call
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Local Contacts -->
+    <div class="row">
+        <!-- Local Emergency Contacts -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-geo-fill"></i> Local & Regional Contacts
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if contacts %}
+                    <div class="row">
+                        {% for contact in contacts %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ contact.name }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ contact.organization }}</h6>
+                                    
+                                    <div class="contact-info mt-3">
+                                        <div class="mb-2">
+                                            <i class="bi bi-telephone"></i>
+                                            <strong>Phone:</strong> {{ contact.phone }}
+                                        </div>
+                                        {% if contact.email %}
+                                        <div class="mb-2">
+                                            <i class="bi bi-envelope"></i>
+                                            <strong>Email:</strong> {{ contact.email }}
+                                        </div>
+                                        {% endif %}
+                                        <div class="mb-2">
+                                            <i class="bi bi-geo-alt"></i>
+                                            <strong>Region:</strong> {{ contact.region }}
+                                        </div>
+                                        {% if contact.website %}
+                                        <div>
+                                            <i class="bi bi-globe"></i>
+                                            <strong>Website:</strong> 
+                                            <a href="{{ contact.website }}" target="_blank">
+                                                Visit
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                onclick="callNumber('{{ contact.phone }}')">
+                                            <i class="bi bi-telephone"></i> Call
+                                        </button>
+                                        {% if contact.email %}
+                                        <a href="mailto:{{ contact.email }}" 
+                                           class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-envelope"></i> Email
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-geo text-muted" style="font-size: 3rem;"></i>
+                        <h4 class="text-muted mt-3">No Local Contacts Available</h4>
+                        <p>Local emergency contacts will be added by administrators.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources & Information -->
+        <div class="col-lg-4">
+            <!-- Quick Reference -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning-charge-fill"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{% url 'report_missing_child' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-exclamation-circle text-danger"></i>
+                            Report a Missing Child
+                        </a>
+                        <a href="{% url 'subscribe_alerts' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-bell-fill text-primary"></i>
+                            Subscribe to Alerts
+                        </a>
+                        <a href="{% url 'case_list' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-search text-success"></i>
+                            View Active Cases
+                        </a>
+                        <button class="list-group-item list-group-item-action" onclick="saveContacts()">
+                            <i class="bi bi-download text-warning"></i>
+                            Save These Contacts
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Checklist -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-list-check"></i> If a Child is Missing</h5>
+                </div>
+                <div class="card-body">
+                    <ol class="mb-0 small">
+                        <li class="mb-2"><strong>CALL 911</strong> immediately</li>
+                        <li class="mb-2">Provide child's full description</li>
+                        <li class="mb-2">Note last seen location and time</li>
+                        <li class="mb-2">Describe what they were wearing</li>
+                        <li class="mb-2">Mention any medical conditions</li>
+                        <li class="mb-2">Stay on the line for instructions</li>
+                        <li class="mb-2">Designate someone to stay by phone</li>
+                        <li>Search small hiding places nearby</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Download Resources -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-arrow-down"></i> Resources</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-outline-primary" onclick="downloadGuide()">
+                            <i class="bi bi-file-pdf"></i> Safety Guide (PDF)
+                        </a>
+                        <a href="#" class="btn btn-outline-success" onclick="downloadChecklist()">
+                            <i class="bi bi-card-checklist"></i> Emergency Checklist
+                        </a>
+                        <a href="#" class="btn btn-outline-info" onclick="downloadContacts()">
+                            <i class="bi bi-telephone-plus"></i> Contact Cards
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- International Resources -->
+    <div class="card mt-4">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">
+                <i class="bi bi-globe"></i> International Resources
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Canada</h5>
+                            <p class="card-text">
+                                <strong>Missing Kids:</strong> 1-866-KID-TIPS<br>
+                                <strong>Child Find:</strong> 1-800-387-7962<br>
+                                <strong>Website:</strong> missingkids.ca
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">United Kingdom</h5>
+                            <p class="card-text">
+                                <strong>Missing People:</strong> 116 000<br>
+                                <strong>Childline:</strong> 0800 1111<br>
+                                <strong>NSPCC:</strong> 0808 800 5000
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Australia</h5>
+                            <p class="card-text">
+                                <strong>Missing Persons:</strong> 1800 000 634<br>
+                                <strong>Kids Helpline:</strong> 1800 55 1800<br>
+                                <strong>Police Emergency:</strong> 000
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Organizations -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">
+                <i class="bi bi-heart-fill text-danger"></i> Support Organizations
+            </h3>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="bi bi-house-heart text-primary" style="font-size: 2rem;"></i>
+                            </div>
+                            <h6>Family Support</h6>
+                            <small class="text-muted">
+                                Counseling and support for families of missing children
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="bi bi-shield-check text-success" style="font-size: 2rem;"></i>
+                            </div>
+                            <h6>Prevention Programs</h6>
+                            <small class="text-muted">
+                                Educational programs to prevent child abduction
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="bi bi-search text-warning" style="font-size: 2rem;"></i>
+                            </div>
+                            <h6>Search & Rescue</h6>
+                            <small class="text-muted">
+                                Volunteer search teams and K-9 units
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="bi bi-cash-coin text-info" style="font-size: 2rem;"></i>
+                            </div>
+                            <h6>Financial Assistance</h6>
+                            <small class="text-muted">
+                                Help with search costs and related expenses
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Protocol -->
+    <div class="alert alert-warning mt-4">
+        <h5><i class="bi bi-exclamation-triangle"></i> Important Emergency Protocol</h5>
+        <p class="mb-0">
+            <strong>Remember:</strong> Time is critical when a child is missing. The first 3 hours are 
+            the most important. Always call 911 first, then use these resources for additional support. 
+            Never hesitate to call emergency services if you believe a child is in danger.
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function call911() {
+        if (confirm('Are you sure you want to call 911? Only use for real emergencies.')) {
+            window.location.href = 'tel:911';
+        }
+    }
+    
+    function callHotline() {
+        if (confirm('Call National Center for Missing & Exploited Children?\n1-800-843-5678')) {
+            window.location.href = 'tel:1-800-843-5678';
+        }
+    }
+    
+    function callChildFind() {
+        if (confirm('Call Child Find of America?\n1-800-426-5678')) {
+            window.location.href = 'tel:1-800-426-5678';
+        }
+    }
+    
+    function callNumber(number) {
+        // Clean the phone number
+        const cleanNumber = number.replace(/[^0-9+]/g, '');
+        if (confirm(`Call ${number}?`)) {
+            window.location.href = `tel:${cleanNumber}`;
+        }
+    }
+    
+    function saveContacts() {
+        const contacts = `EMERGENCY CONTACTS\n\n` +
+                        `911 - Emergency Services\n` +
+                        `1-800-THE-LOST (1-800-843-5678) - National Center for Missing & Exploited Children\n` +
+                        `1-800-I-AM-LOST (1-800-426-5678) - Child Find of America\n` +
+                        `1-800-RUNAWAY (1-800-786-2929) - National Runaway Safeline\n\n` +
+                        `Save this information in your phone contacts.`;
+        
+        const blob = new Blob([contacts], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'emergency_contacts.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        alert('Emergency contacts have been downloaded as a text file. Save this information in your phone.');
+    }
+    
+    function downloadGuide() {
+        alert('In a real implementation, this would download a PDF safety guide.');
+        // In production, this would link to an actual PDF
+        // window.open('/media/safety_guide.pdf', '_blank');
+    }
+    
+    function downloadChecklist() {
+        const checklist = `IF A CHILD IS MISSING - EMERGENCY CHECKLIST\n\n` +
+                         `1. CALL 911 IMMEDIATELY\n` +
+                         `2. Provide the child's full name, age, and description\n` +
+                         `3. Describe exactly what they were wearing\n` +
+                         `4. Note last known location and time\n` +
+                         `5. Mention any medical conditions or medications\n` +
+                         `6. Provide recent photo to 911 operator\n` +
+                         `7. Designate someone to stay by the phone\n` +
+                         `8. Search immediate area (check hiding spots)\n` +
+                         `9. Do not touch or disturb possible evidence\n` +
+                         `10. Call National Center: 1-800-THE-LOST\n\n` +
+                         `TIME IS CRITICAL - ACT FAST!`;
+        
+        const blob = new Blob([checklist], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'emergency_checklist.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+    
+    function downloadContacts() {
+        alert('Contact cards would be downloaded. In production, this would generate vCard files.');
+    }
+    
+    // Add click-to-copy functionality for phone numbers
+    document.addEventListener('DOMContentLoaded', function() {
+        const phoneElements = document.querySelectorAll('.contact-info [class*="bi-telephone"]');
+        phoneElements.forEach(el => {
+            const parent = el.closest('div');
+            if (parent) {
+                parent.style.cursor = 'pointer';
+                parent.title = 'Click to copy phone number';
+                parent.addEventListener('click', function(e) {
+                    const text = this.textContent.replace('Phone:', '').trim();
+                    navigator.clipboard.writeText(text).then(() => {
+                        const original = this.innerHTML;
+                        this.innerHTML = '<i class="bi bi-check text-success"></i> Copied!';
+                        setTimeout(() => {
+                            this.innerHTML = original;
+                        }, 2000);
+                    });
+                });
+            }
+        });
+    });
+</script>
+
+<style>
+    .contact-info div {
+        padding: 5px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .contact-info div:last-child {
+        border-bottom: none;
+    }
+    
+    .contact-info i {
+        width: 20px;
+        margin-right: 10px;
+        color: #6c757d;
+    }
+    
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+    
+    .list-group-item:first-child {
+        border-top: none;
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+    
+    .table tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+        cursor: pointer;
+    }
+    
+    @media print {
+        .btn, .alert, .breadcrumb {
+            display: none !important;
+        }
+        
+        .card {
+            border: 1px solid #000 !important;
+            break-inside: avoid;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+        
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,487 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Report Sighting - {{ child.first_name }} {{ child.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'case_detail' child.pk %}">{{ child.first_name }} {{ child.last_name }}</a></li>
+            <li class="breadcrumb-item active">Report Sighting</li>
+        </ol>
+    </nav>
+
+    <!-- URGENT ALERT -->
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 2rem;"></i>
+            </div>
+            <div>
+                <h4 class="alert-heading">IF YOU ARE SEEING THE CHILD NOW</h4>
+                <p class="mb-0">
+                    <strong>STOP! CALL 911 IMMEDIATELY!</strong><br>
+                    Do not use this form for real-time sightings. Pick up the phone and call emergency services.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Child Information -->
+        <div class="col-lg-5 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-binoculars-fill"></i> Who You Might Have Seen
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="{{ child.photo.url }}" alt="{{ child.first_name }}" 
+                             class="img-fluid rounded shadow" style="max-height: 250px;">
+                    </div>
+                    
+                    <h4 class="text-center text-danger">{{ child.first_name }} {{ child.last_name }}</h4>
+                    
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block">Age</small>
+                                <strong class="fs-5">{{ child.age }} years</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block">Missing Since</small>
+                                <strong class="fs-5">{{ child.last_seen_date|date:"M d" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block">Height</small>
+                                <strong>{{ child.height|default:"Unknown" }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="info-box">
+                                <small class="text-muted d-block">Hair</small>
+                                <strong>{{ child.hair_color|default:"Unknown" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6><i class="bi bi-info-circle"></i> Identifying Features</h6>
+                        <div class="small text-muted">
+                            {{ child.distinctive_features|striptags|truncatewords:30 }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'case_detail' child.pk %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-card-checklist"></i> View Full Description
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Tips -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-shield-check"></i> Safety First</h6>
+                </div>
+                <div class="card-body small">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <strong>Do not approach</strong> if danger is suspected
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <strong>Do not confront</strong> potential abductor
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <strong>Observe from a distance</strong>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i>
+                            <strong>Note vehicle details</strong> if applicable
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle text-success"></i>
+                            <strong>Call 911</strong> for immediate response
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sighting Form -->
+        <div class="col-lg-7">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-geo-alt-fill"></i> Report Sighting Information
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="bi bi-clock-history" style="font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <strong>Use this form for:</strong><br>
+                                • Past sightings you remember<br>
+                                • Suspicious activity related to this case<br>
+                                • Information that might help investigators
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Sighting Details -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-calendar-event"></i> When & Where
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.sighting_time|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">How certain are you?*</label>
+                                    <select class="form-select" name="certainty" required>
+                                        <option value="">Select certainty level</option>
+                                        <option value="positive">Positive it was them</option>
+                                        <option value="likely">Very likely it was them</option>
+                                        <option value="possible">Possibly them</option>
+                                        <option value="unsure">Unsure, but similar</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    {{ form.location|as_crispy_field }}
+                                    <div class="form-text">
+                                        Be specific: exact address, intersection, landmark, 
+                                        store name, etc.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- What You Saw -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-eye-fill"></i> What You Observed
+                            </h5>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold">Describe what you saw*</label>
+                                    <div class="form-text mb-2">
+                                        Include details about:
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="details[]" value="clothing" id="clothing">
+                                                <label class="form-check-label" for="clothing">
+                                                    Clothing/appearance
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="details[]" value="companions" id="companions">
+                                                <label class="form-check-label" for="companions">
+                                                    Who they were with
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="details[]" value="behavior" id="behavior">
+                                                <label class="form-check-label" for="behavior">
+                                                    Their behavior/condition
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="details[]" value="direction" id="direction">
+                                                <label class="form-check-label" for="direction">
+                                                    Direction they were heading
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="details[]" value="vehicle" id="vehicle">
+                                                <label class="form-check-label" for="vehicle">
+                                                    Vehicle information
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="details[]" value="other" id="other_detail">
+                                                <label class="form-check-label" for="other_detail">
+                                                    Other important details
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{ form.description }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Your Information -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-person-lines-fill"></i> Your Contact Information
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.reported_by|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.contact_number|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="form-text">
+                                Your contact information allows investigators to follow up for more details.
+                                All information is kept confidential.
+                            </div>
+                        </div>
+
+                        <!-- Map Section -->
+                        <div class="mb-4">
+                            <h5 class="border-bottom pb-2 mb-3">
+                                <i class="bi bi-map-fill"></i> Location Details (Optional)
+                            </h5>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div id="mapContainer" class="border rounded p-3 mb-3" style="height: 200px; background-color: #f8f9fa;">
+                                        <div class="text-center text-muted h-100 d-flex flex-column justify-content-center">
+                                            <i class="bi bi-map" style="font-size: 3rem;"></i>
+                                            <p class="mt-2">Map integration available in enhanced version</p>
+                                            <small>Describe location in detail above</small>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Nearest cross streets" 
+                                               name="cross_streets">
+                                        <input type="text" class="form-control" placeholder="City" name="city">
+                                        <input type="text" class="form-control" placeholder="State" name="state">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Important Checkboxes -->
+                        <div class="mb-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="urgent" name="urgent">
+                                <label class="form-check-label text-danger fw-bold" for="urgent">
+                                    <i class="bi bi-exclamation-triangle"></i> 
+                                    This is an URGENT/CRITICAL sighting
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="witness" name="witness">
+                                <label class="form-check-label" for="witness">
+                                    I am willing to speak with investigators
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Section -->
+                        <div class="mt-5">
+                            <div class="alert alert-warning">
+                                <h6><i class="bi bi-clipboard-check"></i> Verification</h6>
+                                <small>
+                                    Your report will be reviewed by our team before being shared with authorities.
+                                    You may be contacted for verification.
+                                </small>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-send-check-fill"></i> Submit Sighting Report
+                                </button>
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-clockwise"></i> Start Over
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5><i class="bi bi-diagram-3"></i> What Happens to Your Report</h5>
+                    <div class="timeline mt-3">
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Immediate Review</h6>
+                                <small>Our team reviews within 30 minutes</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Authority Alert</h6>
+                                <small>Shared with relevant law enforcement</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Investigation</h6>
+                                <small>Added to the case investigation</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6>Case Update</h6>
+                                <small>May appear on case page if verified</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize CKEditor
+        if (document.getElementById('id_description')) {
+            ClassicEditor
+                .create(document.getElementById('id_description'), {
+                    toolbar: ['bold', 'italic', 'bulletedList', 'numberedList'],
+                    placeholder: 'Describe exactly what you saw...',
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
+        // Set default time to now
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('id_sighting_time').value = now.toISOString().slice(0, 16);
+
+        // Form validation
+        const form = document.querySelector('form');
+        const urgentCheckbox = document.getElementById('urgent');
+        
+        form.addEventListener('submit', function(e) {
+            const descriptionField = document.getElementById('id_description');
+            const locationField = document.getElementById('id_location');
+            const certaintyField = document.querySelector('select[name="certainty"]');
+            
+            // Check required fields
+            if (!locationField.value.trim()) {
+                alert('Please provide the location where you saw the child.');
+                locationField.focus();
+                e.preventDefault();
+                return false;
+            }
+            
+            if (!certaintyField.value) {
+                alert('Please indicate how certain you are about this sighting.');
+                certaintyField.focus();
+                e.preventDefault();
+                return false;
+            }
+            
+            if (descriptionField.value.trim().length < 20) {
+                alert('Please provide a more detailed description of what you saw (at least 20 characters).');
+                descriptionField.focus();
+                e.preventDefault();
+                return false;
+            }
+            
+            // Urgent sighting confirmation
+            if (urgentCheckbox.checked) {
+                if (!confirm('You have marked this as an URGENT sighting. This will trigger immediate alerts to authorities. Are you absolutely certain this requires urgent attention?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            
+            return confirm('Ready to submit your sighting report? This information will be sent to investigators.');
+        });
+    });
+</script>
+
+<style>
+    .info-box {
+        padding: 10px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        text-align: center;
+    }
+    
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        left: -30px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #0d6efd;
+    }
+    
+    .timeline-content {
+        padding-left: 10px;
+    }
+    
+    .ck-editor__editable {
+        min-height: 150px;
+        border: 1px solid #dee2e6 !important;
+        border-radius: 0.375rem !important;
+    }
+    
+    #mapContainer {
+        transition: all 0.3s ease;
+    }
+    
+    #mapContainer:hover {
+        background-color: #e9ecef !important;
+    }
+    
+    @media (max-width: 768px) {
+        .input-group {
+            flex-direction: column;
+        }
+        
+        .input-group input {
+            margin-bottom: 5px;
+            width: 100% !important;
+        }
+    }
+</style>
+{% endblock %}
