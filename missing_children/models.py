@@ -110,3 +110,19 @@ class EmergencyContact(models.Model):
     
     class Meta:
         ordering = ['order', 'name']
+        
+class SMSSubscription(models.Model):
+    phone_number = models.CharField(max_length=20, unique=True)
+    verified = models.BooleanField(default=False)
+    verification_code = models.CharField(max_length=6, blank=True)
+    verification_sent_at = models.DateTimeField(null=True, blank=True)
+    location = models.CharField(max_length=100, blank=True)
+    radius_miles = models.IntegerField(default=10)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.phone_number} - {'Verified' if self.verified else 'Pending'}"
